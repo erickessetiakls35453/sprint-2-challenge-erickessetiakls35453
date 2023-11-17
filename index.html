@@ -87,6 +87,36 @@
       // 🌟 HINT: to confirm the existence of a prop, check that its value is not undefined
     }
 
+    function profileActivation(profile, reason) {
+  if (!profile || typeof profile !== 'object') {
+    return "Invalid profile input";
+  }
+
+  const isActive = profile.hasOwnProperty('active') ? profile.active : undefined;
+  const hasReason = profile.hasOwnProperty('reason');
+
+  if (isActive === undefined) {
+    return "impossible to ascertain status";
+  }
+
+  if (isActive) {
+    if (hasReason) {
+      return "confirm status manually";
+    } else {
+      profile.active = false;
+      profile.reason = reason;
+    }
+  } else {
+    if (!hasReason) {
+      return "confirm status manually";
+    } else {
+      delete profile.reason;
+      profile.active = true;
+    }
+  }
+
+  return profile;
+}
     // 👉 CHALLENGE 2
     function mineSweeper() {
       // 🧠 mineSweeper takes a grid as its first argument, and coordinates x and y as the second and third args
@@ -108,6 +138,21 @@
       // 🧠 Edge cases:
       //    * If the x or y coordinates are under 1 or over 3, return the string "invalid coordinates"
     }
+    function mineSweeper(grid, x, y) {
+  const gridSize = grid.length;
+
+  if (x < 1 || x > gridSize || y < 1 || y > gridSize) {
+    return "invalid coordinates";
+  }
+
+  const square = grid[y - 1][x - 1]; // Adjusting for zero-based indexing
+
+  if (square === "🟥") {
+    return "🟥 💀"; // Red square (mine)
+  } else if (square === "🟦") {
+    return "🟦 🥳"; // Blue square (safe)
+  }
+}
 
     // 👉 CHALLENGE 3
     function booleanize() {
@@ -120,7 +165,33 @@
       //    * If a property name exceeds 9 characters, return the string "shorten all prop names to 9 chars or less"
       // 🌟 HINT: careful not to perform any unintended changes on the object
     }
+    function booleanize(obj) {
+  if (!obj || typeof obj !== 'object') {
+    return "Invalid input";
+  }
 
+  const result = {};
+
+  for (let key in obj) {
+    if (key.length > 9) {
+      return "shorten all prop names to 9 chars or less";
+    }
+
+    const value = obj[key];
+
+    if (value === 0) {
+      result[key] = false;
+    } else if (value === 1) {
+      result[key] = true;
+    } else if (value === null) {
+      continue; // Skip null values, excluding them from the result
+    } else {
+      result[key] = value; // Preserve other values as they are
+    }
+  }
+
+  return result;
+}
     // 👉 CHALLENGE 4
     function scrub() {
       // 🧠 scrub takes a string "text" as its first argument, and an array of forbidden words "forbidden" as its second
@@ -135,6 +206,25 @@
       //    scrub("", ["high", "aces""]) // returns ""
       // 🌟 HINT: useful array methods to use are `push`, `indexOf`, `split`, `join`
     }
+    function scrub(text, forbidden) {
+  if (!text || !forbidden || !Array.isArray(forbidden)) {
+    return "";
+  }
+
+  if (forbidden.length === 0) {
+    return text;
+  }
+
+  const words = text.split(' ');
+
+  for (let i = 0; i < words.length; i++) {
+    if (forbidden.includes(words[i])) {
+      words[i] = 'x'.repeat(words[i].length);
+    }
+  }
+
+  return words.join(' ');
+}
 
     // 👉 CHALLENGE 5
     function normalizePhoneNumber() {
@@ -150,6 +240,30 @@
       // 🌟 HINT: at each iteration, if the current character is an "X", replace it with the result of popping a digit from the number
       // 🌟 HINT: if you'd rather loop forwards, use `shift` instead of `pop`
     }
+    function normalizePhoneNumber(number) {
+  if (!number || typeof number !== 'string' || number.length !== 10) {
+    return "type a 10-digit number";
+  }
+
+  const template = "(XXX) XXX-XXXX";
+  let formatted = "";
+
+  for (let i = template.length - 1; i >= 0; i--) {
+    const char = template[i];
+    if (char === "X") {
+      const digit = number.charAt(number.length - 1);
+      if (!Number.isInteger(Number(digit))) {
+        return "invalid phone number";
+      }
+      formatted = digit + formatted;
+      number = number.slice(0, -1);
+    } else {
+      formatted = char + formatted;
+    }
+  }
+
+  return formatted;
+}
 
     // 👉 CHALLENGE 6 (bonus, NOT graded)
     function diceRolls() {
